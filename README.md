@@ -1,36 +1,123 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PMV Evaluador Tributario
 
-## Getting Started
+Plataforma corporativa para la evaluación preliminar de reportes tributarios de
+emprendimientos innovadores. El sistema combina extracción asistida por IA con
+un motor de reglas independiente y separa estrictamente el portal público del
+panel administrativo privado.
 
-First, run the development server:
+## Estado
+
+**Fase 00-B · Base visual corporativa.** El proyecto cuenta con la base
+técnica, la arquitectura modular, las rutas públicas, el sistema visual, los
+formularios de demostración (`/evaluacion`, `/ingreso`) y un conjunto de
+componentes administrativos reutilizables sin rutas. Las integraciones, la
+autenticación, la carga real de documentos y el motor de elegibilidad están
+previstos, pero no implementados.
+
+Esta versión no procesa documentos, no envía ni almacena datos personales, no
+se conecta a Supabase ni a GroqCloud y no expone rutas administrativas
+(`/admin` responde 404).
+
+## Stack
+
+- Next.js 16 con App Router y Turbopack.
+- React 19 y TypeScript en modo `strict`.
+- Tailwind CSS v4 con tokens de diseño en CSS.
+- Componentes base estilo shadcn/ui sobre Radix UI.
+- Supabase PostgreSQL, Auth y Storage (previstos).
+- Drizzle ORM y Drizzle Kit (previstos, sin esquema ni migraciones).
+- GroqCloud mediante `groq-sdk` (previsto, sin conexión).
+- Zod para validación de entorno y datos.
+- Lucide React para iconografía.
+- Vitest para pruebas unitarias.
+- pnpm como gestor de dependencias.
+- Vercel como destino de despliegue futuro.
+
+## Requisitos
+
+- Node.js `>= 22.12.0`.
+- pnpm `12.6.0` (definido en `packageManager`).
+
+## Instalación y ejecución
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+El portal queda disponible en `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+No se requiere un archivo `.env` para ejecutar la Fase 00-B. `.env.example`
+documenta las variables que se utilizarán en fases posteriores; no contiene
+secretos reales y no debe completarse con credenciales de producción en esta
+etapa.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Scripts
 
-## Learn More
+| Comando            | Descripción                                     |
+| ------------------ | ----------------------------------------------- |
+| `pnpm dev`         | Inicia el servidor de desarrollo.               |
+| `pnpm build`       | Genera la compilación de producción.            |
+| `pnpm start`       | Sirve la compilación de producción.             |
+| `pnpm lint`        | Ejecuta ESLint.                                 |
+| `pnpm typecheck`   | Ejecuta TypeScript sin emitir archivos.         |
+| `pnpm test`        | Ejecuta Vitest en modo interactivo.             |
+| `pnpm test:run`    | Ejecuta la suite de pruebas una vez.            |
 
-To learn more about Next.js, take a look at the following resources:
+## Rutas disponibles
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Ruta         | Descripción                                                 |
+| ------------ | ----------------------------------------------------------- |
+| `/`          | Portal público informativo con las 4 etapas del proceso y la sección de resultados preliminares. |
+| `/evaluacion`| Alcance, ruta prevista y formulario visual no operativo (validación local, envío deshabilitado). |
+| `/ingreso`   | Acceso interno con formulario visual de inicio de sesión (sin autenticación real). |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Las rutas administrativas (`/admin`, `/admin/clientes`, `/admin/reportes`,
+`/admin/programas`, etc.) están reservadas y documentadas, pero no existen como
+páginas en esta fase.
 
-## Deploy on Vercel
+## Estructura
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```text
+src/
+  app/                  Rutas, layouts y estilos globales
+  components/
+    ui/                 Primitivos visuales (Button, Input, FormField, Checkbox…)
+    layout/             Header, footer y contenedores
+    brand/              Logo y marca
+    forms/              Formularios visuales no operativos
+    admin/              Componentes administrativos sin rutas
+  config/               Rutas, navegación y configuración del sitio
+  infrastructure/       Adaptadores y configuración de entorno previstos
+  lib/                  Utilidades transversales
+  modules/              Módulos de negocio con capas domain/application/
+                        infrastructure/presentation
+docs/                   Arquitectura, diseño y decisiones técnicas
+tests/                  Pruebas unitarias (utilidades y render de componentes)
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Documentación
+
+- [Arquitectura](docs/architecture.md)
+- [Guía de diseño visual](docs/design-system.md)
+- [Registro de decisiones técnicas](docs/decisions.md)
+- [Informe de Fase 00-A](docs/phase-00a.md)
+- [Informe de Fase 00-B](docs/phase-00b.md)
+
+## Seguridad
+
+- El portal público no muestra nombres, identificadores internos ni condiciones
+  específicas de programas.
+- No se incluyen credenciales en el repositorio.
+- `.env.example` solo contiene valores de ejemplo.
+- Se aplican cabeceras HTTP básicas de endurecimiento en `next.config.ts`.
+- La autenticación y el RBAC se implementarán antes de habilitar cualquier ruta
+  administrativa.
+
+## Restricciones de la fase
+
+No se implementaron autenticación, usuarios, roles, envío de formularios,
+integraciones reales, tablas, migraciones, datos ficticios ni reglas de
+elegibilidad. Los formularios de `/evaluacion` y `/ingreso` son visuales y no
+envían ni almacenan información. El trabajo de la Fase 00-B finaliza con este
+alcance.
